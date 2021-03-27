@@ -11,8 +11,8 @@ public class Solution {
         Thread threadA = new Thread(commonThread, "Нить 1");
 
         Thread threadB = new Thread(commonThread, "Нить 2");
-        threadA.setUncaughtExceptionHandler(handler);
-        threadB.setUncaughtExceptionHandler(handler);
+    //    threadA.setUncaughtExceptionHandler(handler);
+      //  threadB.setUncaughtExceptionHandler(handler);
 
         threadA.start();
         threadB.start();
