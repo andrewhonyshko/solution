@@ -1,78 +1,71 @@
 package solution;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-/* 
-Поиграем?
+/*
+Кто первый встал - того и тапки
 */
 
 public class Solution {
-    public static void main(String[] args) throws InterruptedException {
-        OnlineGame onlineGame = new OnlineGame();
-        onlineGame.start();
-    }
+    public static volatile AtomicInteger readStringCount = new AtomicInteger(0);
+    public static volatile BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-    public static class OnlineGame extends Thread {
-        public static volatile boolean isWinnerFound = false;
+    public static void main(String[] args) throws IOException {
+        //read count of strings
+        int count = Integer.parseInt(reader.readLine());
 
-        public static List<String> steps = new ArrayList<String>();
+        //init threads
+        ReaderThread consolReader1 = new ReaderThread();
+        ReaderThread consolReader2 = new ReaderThread();
+        ReaderThread consolReader3 = new ReaderThread();
 
-        static {
-            steps.add("Начало игры");
-            steps.add("Сбор ресурсов");
-            steps.add("Рост экономики");
-            steps.add("Убийство врагов");
+        consolReader1.start();
+        consolReader2.start();
+        consolReader3.start();
+
+        while (count > readStringCount.get()) {
         }
 
-        protected Gamer gamer1 = new Gamer("Ivanov", 3);
-        protected Gamer gamer2 = new Gamer("Petrov", 1);
-        protected Gamer gamer3 = new Gamer("Sidorov", 5);
+        consolReader1.interrupt();
+        consolReader2.interrupt();
+        consolReader3.interrupt();
+        System.out.println("#1:" + consolReader1);
+        System.out.println("#2:" + consolReader2);
+        System.out.println("#3:" + consolReader3);
+
+        reader.close();
+    }
+
+    public static class ReaderThread extends Thread {
+        private List<String> result = new ArrayList<String>();
 
         public void run() {
-            gamer1.start();
-            gamer2.start();
-            gamer3.start();
+            //add your code here - добавьте код тут
+            while(!isInterrupted())
+            {
+                try {
+                    if(reader.ready()) {
+                        result.add(reader.readLine());
+                        readStringCount.getAndIncrement();
+                    }
+                }
+                catch (IOException e)
+                {
 
-            while (!isWinnerFound) {
+                }
+
+
             }
-            gamer1.interrupt();
-            gamer2.interrupt();
-            gamer3.interrupt();
-        }
-    }
-
-    public static class Gamer extends Thread {
-        private int rating;
-
-        public Gamer(String name, int rating) {
-            super(name);
-            this.rating = rating;
         }
 
         @Override
-        public void run() {
-
-            try
-            {
-                for(int i=0;i<OnlineGame.steps.size();i++) {
-                    Thread.sleep(1000 / this.rating);
-                    System.out.println(getName() + ":" + OnlineGame.steps.get(i));
-                }
-
-                if(OnlineGame.isWinnerFound==false) {
-                    System.out.println(getName() + ":победитель!");
-                    OnlineGame.isWinnerFound = true;
-
-                }
-            }
-            catch (InterruptedException e)
-            {
-                String s=getName()+":проиграл!";
-                System.out.println(s);
-            }
-
-            //Add your code here - добавь код тут
+        public String toString() {
+            return result.toString();
         }
     }
 }
