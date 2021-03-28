@@ -68,7 +68,8 @@ public class Solution {
             }
             catch (InterruptedException e)
             {
-                System.out.println(getName()+":проиграл!");
+                String s=getName()+":проиграл!";
+                System.out.println(s);
             }
 
             //Add your code here - добавь код тут
