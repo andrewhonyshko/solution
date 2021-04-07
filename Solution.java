@@ -1,71 +1,120 @@
 package solution;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /*
-Кто первый встал - того и тапки
+Последовательный вывод файлов
 */
 
 public class Solution {
-    public static volatile AtomicInteger readStringCount = new AtomicInteger(0);
-    public static volatile BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    public static String firstFileName;
+    public static String secondFileName;
+    static BufferedReader reader =new BufferedReader(new InputStreamReader(System.in));
+    static
+    {
 
-    public static void main(String[] args) throws IOException {
-        //read count of strings
-        int count = Integer.parseInt(reader.readLine());
-
-        //init threads
-        ReaderThread consolReader1 = new ReaderThread();
-        ReaderThread consolReader2 = new ReaderThread();
-        ReaderThread consolReader3 = new ReaderThread();
-
-        consolReader1.start();
-        consolReader2.start();
-        consolReader3.start();
-
-        while (count > readStringCount.get()) {
+        try {
+            firstFileName = reader.readLine();
+            secondFileName=reader.readLine();
         }
+        catch (IOException e)
+        {
 
-        consolReader1.interrupt();
-        consolReader2.interrupt();
-        consolReader3.interrupt();
-        System.out.println("#1:" + consolReader1);
-        System.out.println("#2:" + consolReader2);
-        System.out.println("#3:" + consolReader3);
-
-        reader.close();
+        }
     }
 
-    public static class ReaderThread extends Thread {
-        private List<String> result = new ArrayList<String>();
+    //add your code here - добавьте код тут
 
-        public void run() {
-            //add your code here - добавьте код тут
-            while(!isInterrupted())
-            {
-                try {
-                    if(reader.ready()) {
-                        result.add(reader.readLine());
-                        readStringCount.getAndIncrement();
-                    }
+    public static void main(String[] args) throws InterruptedException {
+        try {
+            String x="D:\\text.txt";
+            //FileReader fileReader = new FileReader(this.fullFileName);
+            FileReader fileReader = new FileReader(x);
+            reader=new BufferedReader(fileReader);
+           if(reader.ready()) {
+                String line = reader.readLine();
+                while (line != null) {
+                    System.out.println(line);
+                    line= reader.readLine();
+
+          //          this.content += " " + line;
                 }
-                catch (IOException e)
-                {
-
-                }
-
-
             }
+            reader.close();
+            fileReader.close();
+        }
+        catch ( IOException e)
+        {
+            e.printStackTrace();
+        }
+      systemOutPrintln(firstFileName);
+        //systemOutPrintln(secondFileName);
+    }
+
+    public static void systemOutPrintln(String fileName) throws InterruptedException {
+        ReadFileInterface f = new ReadFileThread();
+        f.setFileName(fileName);
+        f.start();
+        f.join();
+        //add your code here - добавьте код тут
+        System.out.println(f.getFileContent());
+    }
+
+    public interface ReadFileInterface extends Runnable{
+
+        void setFileName(String fullFileName);
+
+        String getFileContent();
+
+        void join() throws InterruptedException;
+
+        void start();
+    }
+    public static class ReadFileThread extends Thread implements ReadFileInterface
+    {
+        private String fullFileName;
+        private String content="";
+
+        @Override
+        public void setFileName(String fullFileName) {
+            this.fullFileName=fullFileName;
+
         }
 
         @Override
-        public String toString() {
-            return result.toString();
+        public String getFileContent() {
+            return content;
+        }
+
+        @Override
+        public void run() {
+            try {
+               // String x="D:\\text.txt";
+                FileReader fileReader = new FileReader(this.fullFileName);
+                //FileReader fileReader = new FileReader(x);
+                BufferedReader reader=new BufferedReader(fileReader);
+                if(reader.ready()) {
+                    String line;
+                    while ((line=reader.readLine()) != null) {
+                        System.out.println(line);
+                        this.content+=line+" ";
+                    }
+                }
+
+                this.content.trim();
+                reader.close();
+                fileReader.close();
+            }
+            catch ( IOException e)
+            {
+                e.printStackTrace();
+            }
+
         }
     }
+
+    //add your code here - class
 }
