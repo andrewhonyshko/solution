@@ -1,120 +1,73 @@
 package solution;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.BufferPoolMXBean;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /*
-РџРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅС‹Р№ РІС‹РІРѕРґ С„Р°Р№Р»РѕРІ
+CRUD
 */
 
 public class Solution {
-    public static String firstFileName;
-    public static String secondFileName;
-    static BufferedReader reader =new BufferedReader(new InputStreamReader(System.in));
-    static
-    {
+    public static String key;
+    public static String name;
+    public static String sex;
+    public static String date;
+    public static List<Person> allPeople = new ArrayList<Person>();
+    public static SimpleDateFormat simpleDateFormat =
+            new SimpleDateFormat("dd/mm/yyyy", Locale.ENGLISH);
+
+    static {
+        allPeople.add(Person.createMale("Иванов Иван", new Date()));  //сегодня родился    id=0
+        allPeople.add(Person.createMale("Петров Петр", new Date()));  //сегодня родился    id=1
+    }
+
+    public static void main(String[] args) {
+
+        getArgs(args);
+
+        switch (key) {
+            case "-c":
+                create(args);
+                break;
+            case "-u":
+                update(args);
+                break;
+
+        }
+        //start here - начни тут
+    }
+
+    public static void create(String args[]) {
+
 
         try {
-            firstFileName = reader.readLine();
-            secondFileName=reader.readLine();
-        }
-        catch (IOException e)
-        {
+            Date db = simpleDateFormat.parse(date);
+            if (sex.equals("м"))
+                allPeople.add(Person.createMale(name, db));
+            if (sex.equals("ж"))
+                allPeople.add(Person.createFemale(name, db));
+            System.out.println(allPeople.size() - 1);
+        } catch (ParseException e) {
 
         }
+
     }
 
-    //add your code here - РґРѕР±Р°РІСЊС‚Рµ РєРѕРґ С‚СѓС‚
+    public static void update(String args[]) {
 
-    public static void main(String[] args) throws InterruptedException {
-        try {
-            String x="D:\\text.txt";
-            //FileReader fileReader = new FileReader(this.fullFileName);
-            FileReader fileReader = new FileReader(x);
-            reader=new BufferedReader(fileReader);
-           if(reader.ready()) {
-                String line = reader.readLine();
-                while (line != null) {
-                    System.out.println(line);
-                    line= reader.readLine();
-
-          //          this.content += " " + line;
-                }
-            }
-            reader.close();
-            fileReader.close();
-        }
-        catch ( IOException e)
-        {
-            e.printStackTrace();
-        }
-      systemOutPrintln(firstFileName);
-        //systemOutPrintln(secondFileName);
     }
 
-    public static void systemOutPrintln(String fileName) throws InterruptedException {
-        ReadFileInterface f = new ReadFileThread();
-        f.setFileName(fileName);
-        f.start();
-        f.join();
-        //add your code here - РґРѕР±Р°РІСЊС‚Рµ РєРѕРґ С‚СѓС‚
-        System.out.println(f.getFileContent());
+    public static void getArgs(String args[]) {
+        key = args[0];
+        name = args[1];
+        sex = args[2];
+        date = args[3];
     }
-
-    public interface ReadFileInterface extends Runnable{
-
-        void setFileName(String fullFileName);
-
-        String getFileContent();
-
-        void join() throws InterruptedException;
-
-        void start();
-    }
-    public static class ReadFileThread extends Thread implements ReadFileInterface
-    {
-        private String fullFileName;
-        private String content="";
-
-        @Override
-        public void setFileName(String fullFileName) {
-            this.fullFileName=fullFileName;
-
-        }
-
-        @Override
-        public String getFileContent() {
-            return content;
-        }
-
-        @Override
-        public void run() {
-            try {
-               // String x="D:\\text.txt";
-                FileReader fileReader = new FileReader(this.fullFileName);
-                //FileReader fileReader = new FileReader(x);
-                BufferedReader reader=new BufferedReader(fileReader);
-                if(reader.ready()) {
-                    String line;
-                    while ((line=reader.readLine()) != null) {
-                        System.out.println(line);
-                        this.content+=line+" ";
-                    }
-                }
-
-                this.content.trim();
-                reader.close();
-                fileReader.close();
-            }
-            catch ( IOException e)
-            {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    //add your code here - class
 }
