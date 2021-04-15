@@ -61,6 +61,16 @@ public class Solution {
     }
 
     public static void update(String args[]) {
+        try {
+            Date db = simpleDateFormat.parse(date);
+            if (sex.equals("ì"))
+                allPeople.set(0,Person.createMale(name, db));
+            if (sex.equals("æ"))
+                allPeople.set(0,Person.createFemale(name, db));
+            System.out.println(allPeople.size() - 1);
+        } catch (ParseException e) {
+
+        }
 
     }
 
