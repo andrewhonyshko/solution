@@ -19,6 +19,7 @@ public class Solution {
     public static String name;
     public static String sex;
     public static String date;
+    public static int id;
     public static List<Person> allPeople = new ArrayList<Person>();
     public static SimpleDateFormat simpleDateFormat =
             new SimpleDateFormat("dd/mm/yyyy", Locale.ENGLISH);
@@ -30,7 +31,7 @@ public class Solution {
 
     public static void main(String[] args) {
 
-        getArgs(args);
+        key=args[0];
 
         switch (key) {
             case "-c":
@@ -39,14 +40,21 @@ public class Solution {
             case "-u":
                 update(args);
                 break;
+            case "-d":
+                delete(args);
+
+            case "-i":
+                print(args);
+                break;
 
         }
         //start here - начни тут
     }
 
     public static void create(String args[]) {
-
-
+        name = args[1];
+        sex = args[2];
+        date = args[3];
         try {
             Date db = simpleDateFormat.parse(date);
             if (sex.equals("м"))
@@ -61,12 +69,16 @@ public class Solution {
     }
 
     public static void update(String args[]) {
+        id=Integer.parseInt(args[1]);
+        name = args[2];
+        sex = args[3];
+        date = args[4];
         try {
             Date db = simpleDateFormat.parse(date);
             if (sex.equals("м"))
-                allPeople.set(0,Person.createMale(name, db));
+                allPeople.set(id,Person.createMale(name, db));
             if (sex.equals("ж"))
-                allPeople.set(0,Person.createFemale(name, db));
+                allPeople.set(id,Person.createFemale(name, db));
             System.out.println(allPeople.size() - 1);
         } catch (ParseException e) {
 
@@ -74,10 +86,22 @@ public class Solution {
 
     }
 
-    public static void getArgs(String args[]) {
-        key = args[0];
-        name = args[1];
-        sex = args[2];
-        date = args[3];
+    public static void delete(String args[])
+    {
+        id=Integer.parseInt(args[1]);
+        allPeople.remove(id);
+
+    }
+    public static void print(String args[])
+    {
+        id=Integer.parseInt(args[1]);
+        simpleDateFormat.applyPattern("dd-MM-yyyy");
+        Person person=allPeople.get(id);
+        System.out.println(person.getName());
+        System.out.println(person.getSex());
+        System.out.println(person.getBirt);
+
+
+
     }
 }
