@@ -22,7 +22,7 @@ public class Solution {
     public static int id;
     public static List<Person> allPeople = new ArrayList<Person>();
     public static SimpleDateFormat simpleDateFormat =
-            new SimpleDateFormat("dd/mm/yyyy", Locale.ENGLISH);
+            new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
     static {
         allPeople.add(Person.createMale("Иванов Иван", new Date()));  //сегодня родился    id=0
@@ -42,7 +42,7 @@ public class Solution {
                 break;
             case "-d":
                 delete(args);
-
+                break;
             case "-i":
                 print(args);
                 break;
@@ -65,7 +65,6 @@ public class Solution {
         } catch (ParseException e) {
 
         }
-
     }
 
     public static void update(String args[]) {
@@ -79,7 +78,6 @@ public class Solution {
                 allPeople.set(id,Person.createMale(name, db));
             if (sex.equals("ж"))
                 allPeople.set(id,Person.createFemale(name, db));
-            System.out.println(allPeople.size() - 1);
         } catch (ParseException e) {
 
         }
@@ -89,19 +87,20 @@ public class Solution {
     public static void delete(String args[])
     {
         id=Integer.parseInt(args[1]);
-        allPeople.remove(id);
+        Person person=allPeople.get(id);
+        person.setBirthDate(null);
+        person.setSex(null);
+        person.setName(null);
+
+        allPeople.set(id,person);
+
+      //  System.out.println(allPeople.get(id));
 
     }
     public static void print(String args[])
     {
         id=Integer.parseInt(args[1]);
-        simpleDateFormat.applyPattern("dd-MM-yyyy");
-        Person person=allPeople.get(id);
-        System.out.println(person.getName());
-        System.out.println(person.getSex());
-        System.out.println(person.getBirt);
-
-
-
+        System.out.println(allPeople.get(id));
+        System.out.println("What is the:::::");
     }
 }
