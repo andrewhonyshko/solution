@@ -1,8 +1,5 @@
 package solution;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.management.BufferPoolMXBean;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,86 +18,104 @@ public class Solution {
     public static String date;
     public static int id;
     public static List<Person> allPeople = new ArrayList<Person>();
-    public static SimpleDateFormat simpleDateFormat =
+    public static SimpleDateFormat sdf =
             new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
     static {
-        allPeople.add(Person.createMale("Иванов Иван", new Date()));  //сегодня родился    id=0
-        allPeople.add(Person.createMale("Петров Петр", new Date()));  //сегодня родился    id=1
+        allPeople.add(Person.createMale("РРІР°РЅРѕРІ РРІР°РЅ", new Date()));  //СЃРµРіРѕРґРЅСЏ СЂРѕРґРёР»СЃСЏ    id=0
+        allPeople.add(Person.createMale("РџРµС‚СЂРѕРІ РџРµС‚СЂ", new Date()));
+        //allPeople.add(Person.createMale("РЎРёРґРѕСЂРѕРІ РЎРёРґСЂ", new Date()));//СЃРµРіРѕРґРЅСЏ СЂРѕРґРёР»СЃСЏ    id=2
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-        key=args[0];
+        key = args[0];
 
         switch (key) {
             case "-c":
-                create(args);
+                synchronized (allPeople) {
+                    create(args);
+                }
                 break;
             case "-u":
-                update(args);
+                synchronized (allPeople) {
+                    update(args);
+                }
                 break;
             case "-d":
-                delete(args);
+                synchronized (allPeople) {
+                    delete(args);
+                }
                 break;
             case "-i":
-                print(args);
+                synchronized (allPeople) {
+                    print(args);
+                }
                 break;
 
         }
-        //start here - начни тут
+        //start here - РЅР°С‡РЅРё С‚СѓС‚
     }
 
-    public static void create(String args[]) {
-        name = args[1];
-        sex = args[2];
-        date = args[3];
-        try {
-            Date db = simpleDateFormat.parse(date);
-            if (sex.equals("м"))
+    public static void create(String args[]) throws ParseException {
+        int j = 1;
+        while (j < args.length) {
+            name = args[j];
+            sex = args[j + 1];
+            date = args[j + 2];
+            Date db = sdf.parse(date);
+            if (sex.equals("Рј"))
                 allPeople.add(Person.createMale(name, db));
-            if (sex.equals("ж"))
+            else if (sex.equals("Р¶"))
                 allPeople.add(Person.createFemale(name, db));
             System.out.println(allPeople.size() - 1);
-        } catch (ParseException e) {
-
+            j = j + 3;
         }
     }
 
-    public static void update(String args[]) {
-        id=Integer.parseInt(args[1]);
-        name = args[2];
-        sex = args[3];
-        date = args[4];
-        try {
-            Date db = simpleDateFormat.parse(date);
-            if (sex.equals("м"))
-                allPeople.set(id,Person.createMale(name, db));
-            if (sex.equals("ж"))
-                allPeople.set(id,Person.createFemale(name, db));
-        } catch (ParseException e) {
+    public static void update(String args[]) throws ParseException {
+        int j = 1;
+        while (j < args.length) {
+            id = Integer.parseInt(args[j]);
+            name = args[j + 1];
+            sex = args[j + 2];
+            date = args[j + 3];
+            Date db = sdf.parse(date);
+            if (sex.equals("Рј"))
+                allPeople.set(id, Person.createMale(name, db));
+            if (sex.equals("Р¶"))
+                allPeople.set(id, Person.createFemale(name, db));
 
+            j=j+4;
         }
 
     }
 
-    public static void delete(String args[])
-    {
-        id=Integer.parseInt(args[1]);
-        Person person=allPeople.get(id);
-        person.setBirthDate(null);
-        person.setSex(null);
-        person.setName(null);
+    public static void delete(String args[]) {
+       int j=1;
+       while(j<args.length) {
 
-        allPeople.set(id,person);
+           id = Integer.parseInt(args[j]);
+           Person person = allPeople.get(id);
+           person.setBirthDate(null);
+           person.setSex(null);
+           person.setName(null);
 
-      //  System.out.println(allPeople.get(id));
+           allPeople.set(id, person);
+           j++;
+       }
+
+        //  System.out.println(allPeople.get(id));
 
     }
-    public static void print(String args[])
-    {
-        id=Integer.parseInt(args[1]);
-        System.out.println(allPeople.get(id));
-        System.out.println("What is the:::::");
+
+    public static void print(String args[]) {
+        int j=1;
+        while(j< args.length) {
+            id = Integer.parseInt(args[j]);
+            System.out.println(allPeople.get(id));
+            j++;
+        }
+
     }
 }

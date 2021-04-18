@@ -1,6 +1,8 @@
 package solution;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Person {
     private String name;
@@ -43,6 +45,21 @@ public class Person {
 
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
+    }
+
+    @Override
+    public String toString() {
+        SimpleDateFormat sdf=new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        String date=sdf.format(birthDate);
+        String s="";
+        s=this.name+" ";
+        if(this.sex==Sex.MALE)
+            s+="м ";
+        else if(this.sex==Sex.FEMALE) {
+            s += "ж ";
+        }
+        s+=date;
+        return s;
     }
 }
 
