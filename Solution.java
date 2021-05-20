@@ -1,106 +1,82 @@
 package solution;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.management.BufferPoolMXBean;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
-/*
-CRUD
-*/
 
 public class Solution {
-    public static String key;
-    public static String name;
-    public static String sex;
-    public static String date;
-    public static int id;
-    public static List<Person> allPeople = new ArrayList<Person>();
-    public static SimpleDateFormat simpleDateFormat =
-            new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-
-    static {
-        allPeople.add(Person.createMale("Иванов Иван", new Date()));  //сегодня родился    id=0
-        allPeople.add(Person.createMale("Петров Петр", new Date()));  //сегодня родился    id=1
-    }
-
+    static ArrayList<Integer> list=new ArrayList<>();
     public static void main(String[] args) {
+        String key=args[0];
 
-        key=args[0];
 
-        switch (key) {
-            case "-c":
-                create(args);
-                break;
-            case "-u":
-                update(args);
+        switch (key)
+        {
+            case "-e":
+                coder(args[1], args[2]);
                 break;
             case "-d":
-                delete(args);
+                decoder(args[1], args[2]);
                 break;
-            case "-i":
-                print(args);
-                break;
-
         }
-        //start here - начни тут
+
+
+
     }
 
-    public static void create(String args[]) {
-        name = args[1];
-        sex = args[2];
-        date = args[3];
+    public static void coder(String fileName, String fileOutput) {
         try {
-            Date db = simpleDateFormat.parse(date);
-            if (sex.equals("м"))
-                allPeople.add(Person.createMale(name, db));
-            if (sex.equals("ж"))
-                allPeople.add(Person.createFemale(name, db));
-            System.out.println(allPeople.size() - 1);
-        } catch (ParseException e) {
+            InputStream stream = new FileInputStream(fileName);
+            BufferedInputStream buffer = new BufferedInputStream(stream,200);
+            List<Character> characters=new ArrayList<>();
+            int i=0;
+            while((i=buffer.read())!=-1)
+            {
+                characters.add((char) ((char) i*10));
+                list.add(i*10);
+            }
+            BufferedOutputStream bufferedOutput=new BufferedOutputStream(
+                    new FileOutputStream(fileOutput));
 
+            for(Integer b:list)
+                bufferedOutput.write(b);
+            buffer.close();
+            bufferedOutput.close();
         }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+       // buffer.
     }
-
-    public static void update(String args[]) {
-        id=Integer.parseInt(args[1]);
-        name = args[2];
-        sex = args[3];
-        date = args[4];
+    public static void decoder(String fileName, String fileOutput)
+    {
         try {
-            Date db = simpleDateFormat.parse(date);
-            if (sex.equals("м"))
-                allPeople.set(id,Person.createMale(name, db));
-            if (sex.equals("ж"))
-                allPeople.set(id,Person.createFemale(name, db));
-        } catch (ParseException e) {
+            InputStream stream = new FileInputStream(fileName);
+            BufferedInputStream buffer = new BufferedInputStream(stream,200);
+            List<Integer> list=new ArrayList<>();
+            List<Character> characters=new ArrayList<>();
 
+            int i=0;
+            while((i=buffer.read())!=-1)
+            {
+                characters.add((char) (i/10));
+                list.add(i/10);
+            }
+            BufferedOutputStream bufferedOutput=new BufferedOutputStream(
+                    new FileOutputStream(fileOutput));
+
+            for(Integer b:list)
+                bufferedOutput.write(b);
+            buffer.close();
+            bufferedOutput.close();
         }
-
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    public static void delete(String args[])
-    {
-        id=Integer.parseInt(args[1]);
-        Person person=allPeople.get(id);
-        person.setBirthDate(null);
-        person.setSex(null);
-        person.setName(null);
 
-        allPeople.set(id,person);
-
-      //  System.out.println(allPeople.get(id));
-
-    }
-    public static void print(String args[])
-    {
-        id=Integer.parseInt(args[1]);
-        System.out.println(allPeople.get(id));
-        System.out.println("What is the:::::");
-    }
 }
