@@ -1,121 +1,81 @@
 package solution;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
-/*
-CRUD
-*/
+import java.awt.*;
+import java.io.*;
+import java.util.*;
 
 public class Solution {
-    public static String key;
-    public static String name;
-    public static String sex;
-    public static String date;
-    public static int id;
-    public static List<Person> allPeople = new ArrayList<Person>();
-    public static SimpleDateFormat sdf =
-            new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    public static class Product {
+        private int id;
+        private String productName;
+        private String price;
+        private String quantity;
 
-    static {
-        allPeople.add(Person.createMale("Иванов Иван", new Date()));  //сегодня родился    id=0
-        allPeople.add(Person.createMale("Петров Петр", new Date()));
-        //allPeople.add(Person.createMale("Сидоров Сидр", new Date()));//сегодня родился    id=2
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        key = args[0];
-
-        switch (key) {
-            case "-c":
-                synchronized (allPeople) {
-                    create(args);
-                }
-                break;
-            case "-u":
-                synchronized (allPeople) {
-                    update(args);
-                }
-                break;
-            case "-d":
-                synchronized (allPeople) {
-                    delete(args);
-                }
-                break;
-            case "-i":
-                synchronized (allPeople) {
-                    print(args);
-                }
-                break;
-
+        public Product(int id, String productName, String price, String quantity) {
+            this.id = id;
+            this.productName = productName;
+            this.price = price;
+            this.quantity = quantity;
         }
-        //start here - начни тут
-    }
 
-    public static void create(String args[]) throws ParseException {
-        int j = 1;
-        while (j < args.length) {
-            name = args[j];
-            sex = args[j + 1];
-            date = args[j + 2];
-            Date db = sdf.parse(date);
-            if (sex.equals("м"))
-                allPeople.add(Person.createMale(name, db));
-            else if (sex.equals("ж"))
-                allPeople.add(Person.createFemale(name, db));
-            System.out.println(allPeople.size() - 1);
-            j = j + 3;
+        @Override
+        public String toString() {
+            return String.format("%-8d%-30s%-8s%-4s", id, productName, price, quantity);
         }
     }
 
-    public static void update(String args[]) throws ParseException {
-        int j = 1;
-        while (j < args.length) {
-            id = Integer.parseInt(args[j]);
-            name = args[j + 1];
-            sex = args[j + 2];
-            date = args[j + 3];
-            Date db = sdf.parse(date);
-            if (sex.equals("м"))
-                allPeople.set(id, Person.createMale(name, db));
-            if (sex.equals("ж"))
-                allPeople.set(id, Person.createFemale(name, db));
-
-            j=j+4;
+    public static void main(String[] args) throws IOException {
+        if (args.length == 0)
+            return;
+        ArrayList<Product> listID = new ArrayList<>();
+        String fileName="c:\\file.txt";
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        while(reader.ready())
+        {
+            Product product=getProduct(reader.readLine());
+            listID.add(product);
         }
+        reader.close();
+        int id=Integer.MIN_VALUE;
+        for(Product pr:listID)
+        {
+            if(id<pr.id)
+                id=pr.id;
+        }
+        String productName="";
+        String price=args[args.length-2];
+        String quantity=args[args.length-1];
+        for(int i=1;i< args.length-2;i++)
+        {
+            productName+=args[i]+" ";
+        }
+        if(productName.length()>30)
+            productName=productName.substring(0,30);
+        if(price.length()>8)
+            price=price.substring(0,8);
+        if(quantity.length()>4)
+            quantity=quantity.substring(0,4);
+
+        //Product product=new Product(++id,productName,price,quantity);
+        listID.add(new Product(++id,productName,price,quantity));
+
+        BufferedWriter writer=new BufferedWriter(new FileWriter(fileName));
+        for(Product pr:listID) {
+            writer.write(pr.toString());
+            writer.newLine();
+        }
+        writer.close();
+
 
     }
-
-    public static void delete(String args[]) {
-       int j=1;
-       while(j<args.length) {
-
-           id = Integer.parseInt(args[j]);
-           Person person = allPeople.get(id);
-           person.setBirthDate(null);
-           person.setSex(null);
-           person.setName(null);
-
-           allPeople.set(id, person);
-           j++;
-       }
-
-        //  System.out.println(allPeople.get(id));
-
-    }
-
-    public static void print(String args[]) {
-        int j=1;
-        while(j< args.length) {
-            id = Integer.parseInt(args[j]);
-            System.out.println(allPeople.get(id));
-            j++;
-        }
+    public static Product getProduct(String string)
+    {
+        String id = string.substring(0, 8).trim();
+        String name = string.substring(8, 38).trim();
+        String price = string.substring(38, 46).trim();
+        String quantity = string.substring(46).trim();
+        return new Product(Integer.parseInt(id), name, price, quantity);
 
     }
 }
