@@ -1,17 +1,16 @@
 package solution;
 
-<<<<<<< HEAD
-
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 
 public class Solution {
-    public static class Product {
-        private int id;
-        private String productName;
-        private String price;
-        private String quantity;
+    public static class Product
+    {
+        int id;
+        String productName;
+        String price;
+        String quantity;
 
         public Product(int id, String productName, String price, String quantity) {
             this.id = id;
@@ -22,34 +21,84 @@ public class Solution {
 
         @Override
         public String toString() {
-            return String.format("%-8d%-30s%-8s%-4s", id, productName, price, quantity);
+            return String.format("%-8d%-30s%-8s%-4s",id,productName,price,quantity);
         }
     }
 
+
     public static void main(String[] args) throws IOException {
-        if (args.length == 0)
+        if(args.length==0)
             return;
-        ArrayList<Product> listID = new ArrayList<>();
-        String fileName="c:\\file.txt";
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        while(reader.ready())
+
+        BufferedReader reader=new BufferedReader(new InputStreamReader(System.in));
+        String fileName = reader.readLine();
+        ArrayList<Product> productsList=new ArrayList<>();
+        BufferedReader bufferedReader=new BufferedReader(new FileReader(fileName));
+        while(bufferedReader.ready())
         {
-            Product product=getProduct(reader.readLine());
-            listID.add(product);
+            Product product=getProduct(bufferedReader.readLine());
+            productsList.add(product);
         }
-        reader.close();
-        int id=Integer.MIN_VALUE;
-        for(Product pr:listID)
+        bufferedReader.close();
+        switch (args[0])
         {
-            if(id<pr.id)
-                id=pr.id;
+            case "-u":
+            {
+                int index=0;
+                int id=Integer.parseInt(args[1]);
+                for(int i=0;i<productsList.size();i++)
+                {
+                    if(productsList.get(i).id==id)
+                        index=i;
+                }
+                productsList.set(index,updateProduct(args));
+                BufferedWriter writer=new BufferedWriter(new FileWriter(fileName));
+                for(Product pr:productsList)
+                {
+                    writer.write(pr.toString());
+                    writer.newLine();
+                }
+                writer.close();
+                break;
+            }
+            case "-d":
+            {
+                int index=0;
+                int id=Integer.parseInt(args[1]);
+                for(int i=0;i<productsList.size();i++)
+                {
+                    if(productsList.get(i).id==id)
+                        index=i;
+                }
+                productsList.remove(index);
+                BufferedWriter writer=new BufferedWriter(new FileWriter(fileName));
+                for(Product pr:productsList)
+                {
+                    writer.write(pr.toString());
+                    writer.newLine();
+                }
+                writer.close();
+                break;
+            }
         }
+    }
+    public static Product getProduct(String str)
+    {
+        String id =str.substring(0,8).trim();
+        String name=str.substring(8,38).trim();
+        String price=str.substring(38,46).trim();
+        String quantity=str.substring(46).trim();
+        return new Product(Integer.parseInt(id),name,price,quantity);
+    }
+    public static Product updateProduct(String args[])
+    {
+        int id=Integer.parseInt(args[1]);
         String productName="";
         String price=args[args.length-2];
         String quantity=args[args.length-1];
-        for(int i=1;i< args.length-2;i++)
+        for(int j=2;j< args.length-2;j++)
         {
-            productName+=args[i]+" ";
+            productName+=args[j]+" ";
         }
         if(productName.length()>30)
             productName=productName.substring(0,30);
@@ -58,106 +107,7 @@ public class Solution {
         if(quantity.length()>4)
             quantity=quantity.substring(0,4);
 
-        //Product product=new Product(++id,productName,price,quantity);
-        listID.add(new Product(++id,productName,price,quantity));
-
-        BufferedWriter writer=new BufferedWriter(new FileWriter(fileName));
-        for(Product pr:listID) {
-            writer.write(pr.toString());
-            writer.newLine();
-        }
-        writer.close();
-
+        return new Product(id,productName,price,quantity);
 
     }
-    public static Product getProduct(String string)
-    {
-        String id = string.substring(0, 8).trim();
-        String name = string.substring(8, 38).trim();
-        String price = string.substring(38, 46).trim();
-        String quantity = string.substring(46).trim();
-        return new Product(Integer.parseInt(id), name, price, quantity);
-
-    }
-=======
-import java.io.*;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
-public class Solution {
-    static ArrayList<Integer> list=new ArrayList<>();
-    public static void main(String[] args) {
-        String key=args[0];
-
-
-        switch (key)
-        {
-            case "-e":
-                coder(args[1], args[2]);
-                break;
-            case "-d":
-                decoder(args[1], args[2]);
-                break;
-        }
-
-
-
-    }
-
-    public static void coder(String fileName, String fileOutput) {
-        try {
-            InputStream stream = new FileInputStream(fileName);
-            BufferedInputStream buffer = new BufferedInputStream(stream,200);
-            List<Character> characters=new ArrayList<>();
-            int i=0;
-            while((i=buffer.read())!=-1)
-            {
-                characters.add((char) ((char) i*10));
-                list.add(i*10);
-            }
-            BufferedOutputStream bufferedOutput=new BufferedOutputStream(
-                    new FileOutputStream(fileOutput));
-
-            for(Integer b:list)
-                bufferedOutput.write(b);
-            buffer.close();
-            bufferedOutput.close();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-       // buffer.
-    }
-    public static void decoder(String fileName, String fileOutput)
-    {
-        try {
-            InputStream stream = new FileInputStream(fileName);
-            BufferedInputStream buffer = new BufferedInputStream(stream,200);
-            List<Integer> list=new ArrayList<>();
-            List<Character> characters=new ArrayList<>();
-
-            int i=0;
-            while((i=buffer.read())!=-1)
-            {
-                characters.add((char) (i/10));
-                list.add(i/10);
-            }
-            BufferedOutputStream bufferedOutput=new BufferedOutputStream(
-                    new FileOutputStream(fileOutput));
-
-            for(Integer b:list)
-                bufferedOutput.write(b);
-            buffer.close();
-            bufferedOutput.close();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-
->>>>>>> 0fb5e9ee5a020cc4338b2619e10465934fa65d93
 }
