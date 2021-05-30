@@ -7,10 +7,7 @@ import java.util.*;
 public class Solution {
     public static void main(String[] args) throws IOException
     {
-        DataBase dataBase=new AdapterDataBase();
-        dataBase.insert();
-        dataBase.update();
-        dataBase.delete();
-
+        USB memoryCard=new CardReader(new MemoryCard());
+        memoryCard.connectWithUsbCable();
     }
 }
